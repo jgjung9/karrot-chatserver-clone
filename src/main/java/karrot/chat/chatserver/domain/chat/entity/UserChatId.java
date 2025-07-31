@@ -1,10 +1,12 @@
 package karrot.chat.chatserver.domain.chat.entity;
 
 import jakarta.persistence.Column;
+import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.Objects;
 
+@Getter
 public class UserChatId implements Serializable {
     @Column(name = "chat_id")
     private Long chatId;
