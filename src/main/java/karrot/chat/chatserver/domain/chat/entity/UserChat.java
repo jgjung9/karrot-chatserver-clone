@@ -3,19 +3,19 @@ package karrot.chat.chatserver.domain.chat.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import lombok.Data;
 import org.checkerframework.checker.units.qual.C;
 
 @Entity
 @Data
+@IdClass(UserChatId.class)
 public class UserChat {
     @Id
-    @Column(name = "chat_id")
     private Long chatId;
 
     @Id
-    @Column(name = "user_id")
-    private Long userID;
+    private Long userId;
 
     private Boolean mute;
 

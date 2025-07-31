@@ -5,15 +5,15 @@ import jakarta.persistence.Column;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class MessageId implements Serializable {
+public class UserChatId implements Serializable {
     @Column(name = "chat_id")
     private Long chatId;
     @Column(name = "user_id")
     private Long userId;
 
-    public MessageId() {}
+    public UserChatId() {}
 
-    public MessageId(Long chatId, Long userId) {
+    public UserChatId(Long chatId, Long userId) {
         this.chatId = chatId;
         this.userId = userId;
     }
@@ -22,7 +22,7 @@ public class MessageId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MessageId messageId = (MessageId) o;
+        UserChatId messageId = (UserChatId) o;
         return Objects.equals(chatId, messageId.chatId) && Objects.equals(userId, messageId.userId);
     }
 
