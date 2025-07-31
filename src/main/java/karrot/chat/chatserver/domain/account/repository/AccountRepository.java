@@ -18,10 +18,7 @@ import static karrot.chat.chatserver.domain.account.entity.QAccount.account;
 @RequiredArgsConstructor
 public class AccountRepository {
 
-    @Qualifier("accountEntityManager")
     private final EntityManager em;
-
-    @Qualifier("accountQueryFactory")
     private final JPAQueryFactory queryFactory;
 
     public Long save(Account account) {
