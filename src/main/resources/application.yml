@@ -1,19 +1,22 @@
 spring:
   datasource:
     account:
-      url: jdbc:mysql://localhost:3307/account
-      username: root
+      url: jdbc:h2:tcp://localhost:1521/test;SCHEMA=account;MODE=MYSQL
+      username: gio
       password: 1234
-      driver-class-name: com.mysql.cj.jdbc.Driver
+      driver-class-name: org.h2.Driver
     chat:
-      url: jdbc:mysql://localhost:3307/chatdb
-      username: root
+      url: jdbc:h2:tcp://localhost:1521/test;SCHEMA=chatdb;MODE=MYSQL
+      username: gio
       password: 1234
-      driver-class-name: com.mysql.cj.jdbc.Driver
+      driver-class-name: org.h2.Driver
 
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
     show-sql: true
 
   application:
