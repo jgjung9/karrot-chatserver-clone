@@ -20,4 +20,8 @@ public class UserChat {
 
     @Column(name = "display_idx")
     private String displayIdx;
+
+    public UserChatId getUserChatId() {
+        return new UserChatId(chatId, userId);
+    }
 }
