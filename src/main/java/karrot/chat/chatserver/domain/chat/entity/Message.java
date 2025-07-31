@@ -12,6 +12,9 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "chat_id")
+    private Long chatId;
+
     @Column(name = "user_id")
     private Long userId;
 
