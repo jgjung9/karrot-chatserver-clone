@@ -2,7 +2,6 @@ package karrot.chat.chatserver.domain.chat.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import karrot.chat.chatserver.domain.chat.entity.QUserChat;
 import karrot.chat.chatserver.domain.chat.entity.UserChat;
 import karrot.chat.chatserver.domain.chat.entity.UserChatId;
 import org.springframework.beans.factory.annotation.Qualifier;
