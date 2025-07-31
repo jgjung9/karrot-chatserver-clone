@@ -18,7 +18,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = "karrot.chat.chatserver.domain.chat",
+        basePackages = "karrot.chat.chatserver.domain.chat.repository",
         entityManagerFactoryRef = "chatEntityManager",
         transactionManagerRef = "chatTransactionManager"
 )
