@@ -19,14 +19,14 @@ public class CommandManager {
 
     private final ObjectMapper objectMapper;
     private final SessionManager sessionManager;
-    private final Map<Commands, Command> commands = new ConcurrentHashMap<>();
-    private final Command defaultCommand = new DefaultCommand();
+    private final Map<ClientCommands, ClientCommand> commands = new ConcurrentHashMap<>();
+    private final ClientCommand defaultClientCommand = new DefaultClientCommand();
 
     public CommandManager(ObjectMapper objectMapper, SessionManager sessionManager) {
         this.objectMapper = objectMapper;
         this.sessionManager = sessionManager;
 
-        for (Commands command : Commands.values()) {
+        for (ClientCommands command : ClientCommands.values()) {
             switch (command) {
                 case SEND_MESSAGE -> commands.put(command, new SendMessageCommand(objectMapper));
             }
@@ -36,9 +36,9 @@ public class CommandManager {
     public void execute(WebSocketSession session, TextMessage message) {
         try {
             ClientToServerRequest request = objectMapper.readValue(message.getPayload(), ClientToServerRequest.class);
-            Command command = commands.get(Commands.valueOf(request.getCommand()));
+            ClientCommand command = commands.get(ClientCommands.valueOf(request.getCommand()));
             if (command == null) {
-                command = defaultCommand;
+                command = defaultClientCommand;
             }
             command.execute(request.getBody(), session);
         } catch (JsonProcessingException e) {
@@ -48,7 +48,7 @@ public class CommandManager {
         }
     }
 
-    public void send(Long userId, Commands command, Object body) throws IOException {
+    public void send(Long userId, ServerCommands command, Object body) throws IOException {
         WebSocketSession session = sessionManager.getSession(userId);
         if (session == null || !session.isOpen()) {
             // TODO: 예외 처리

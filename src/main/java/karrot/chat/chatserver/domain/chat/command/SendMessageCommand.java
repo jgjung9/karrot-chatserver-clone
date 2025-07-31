@@ -10,7 +10,7 @@ import org.springframework.web.socket.WebSocketSession;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-public class SendMessageCommand implements Command {
+public class SendMessageCommand implements ClientCommand {
 
     private final ObjectMapper objectMapper;
 
