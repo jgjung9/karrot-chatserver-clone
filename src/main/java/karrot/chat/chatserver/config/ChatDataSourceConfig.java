@@ -22,7 +22,7 @@ import javax.sql.DataSource;
         entityManagerFactoryRef = "chatEntityManager",
         transactionManagerRef = "chatTransactionManager"
 )
-public class ChatConfig {
+public class ChatDataSourceConfig {
 
     @Bean
     @ConfigurationProperties(prefix = "spring.datasource.chat")
