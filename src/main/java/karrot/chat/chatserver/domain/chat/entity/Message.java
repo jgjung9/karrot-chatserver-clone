@@ -1,20 +1,18 @@
 package karrot.chat.chatserver.domain.chat.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
+import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Data
-@IdClass(MessageId.class)
 public class Message {
     @Id
-    private Long chatId;
-    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "user_id")
     private Long userId;
 
     private String text;
