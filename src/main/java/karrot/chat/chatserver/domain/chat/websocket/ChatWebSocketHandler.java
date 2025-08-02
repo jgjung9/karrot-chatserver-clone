@@ -2,29 +2,37 @@ package karrot.chat.chatserver.domain.chat.websocket;
 
 import karrot.chat.chatserver.domain.chat.command.CommandManager;
 import karrot.chat.chatserver.domain.chat.session.SessionManager;
+import karrot.chat.chatserver.infra.redis.repository.UserSessionRepository;
+import karrot.chat.chatserver.infra.redis.session.UserSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.util.Map;
+
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
-    private Long sequence = 0L;
+    @Value("${SERVER_NUMBER}")
+    private String serverNumber;
+
     private final SessionManager sessionManager;
     private final CommandManager commandManager;
+    private final UserSessionRepository userSessionRepository;
 
-    public ChatWebSocketHandler(SessionManager sessionManager, CommandManager commandManager) {
-        this.sessionManager = sessionManager;
-        this.commandManager = commandManager;
-    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        sessionManager.register(++sequence, session);
+        String userId = (String) session.getAttributes().get("userId");
+        userSessionRepository.save(new UserSession(userId, serverNumber));
+        sessionManager.register(Long.valueOf(userId), session);
     }
 
     @Override
@@ -34,8 +42,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        Long userId = 1L;
-        sessionManager.remove(userId);
+        String userId = (String) session.getAttributes().get("userId");
+        sessionManager.remove(Long.valueOf(userId));
         log.info("연결 종료: {}", userId);
     }
 }
