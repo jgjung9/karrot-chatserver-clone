@@ -1,4 +1,4 @@
-package karrot.chat.chatserver.domain.chat.command;
+package karrot.chat.chatserver.domain.chat.command.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.web.socket.WebSocketSession;
@@ -8,4 +8,5 @@ import java.io.IOException;
 public interface ClientCommand {
 
     void execute(JsonNode payload, WebSocketSession session) throws IOException;
+    ClientCommands getCommandType();
 }
