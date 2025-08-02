@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    account:
+      url: jdbc:h2:tcp://localhost:1521/test;SCHEMA=account;MODE=MYSQL
+      username: gio
+      password: 1234
+      driver-class-name: org.h2.Driver
+    chat:
+      url: jdbc:h2:tcp://localhost:1521/test;SCHEMA=chatdb;MODE=MYSQL
+      username: gio
+      password: 1234
+      driver-class-name: org.h2.Driver
+  data:
+    redis:
+      host: localhost
+      port: 6380
+      database: 0
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+    show-sql: true
+
+  application:
+    name: chatserver
