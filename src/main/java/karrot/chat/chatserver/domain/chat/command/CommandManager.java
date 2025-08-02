@@ -26,7 +26,6 @@ public class CommandManager {
 
     private final ObjectMapper objectMapper;
     private final SessionManager sessionManager;
-    private final RedisStreamProducer redisStreamProducer;
     private final Map<ClientCommands, ClientCommand> clientCommands = new ConcurrentHashMap<>();
     private final Map<ServerCommands, ServerCommand> serverCommands = new ConcurrentHashMap<>();
     private final ClientCommand defaultClientCommand = new DefaultClientCommand();
@@ -34,13 +33,11 @@ public class CommandManager {
     public CommandManager(
             ObjectMapper objectMapper,
             SessionManager sessionManager,
-            RedisStreamProducer redisStreamProducer,
             List<ClientCommand> clientCommandList,
             List<ServerCommand> serverCommandList
     ) {
         this.objectMapper = objectMapper;
         this.sessionManager = sessionManager;
-        this.redisStreamProducer = redisStreamProducer;
 
         clientCommandList.stream()
                 .forEach(c -> clientCommands.put(c.getCommandType(), c));
@@ -63,7 +60,7 @@ public class CommandManager {
         }
     }
 
-    public void send(Long userId, ServerCommands command, Object body){
+    public void send(Long userId, ServerCommands commandType, Object body){
         WebSocketSession session = sessionManager.getSession(userId);
         if (session == null || !session.isOpen()) {
             // TODO: 예외 처리
@@ -71,10 +68,8 @@ public class CommandManager {
         }
 
         try {
-            ServerToClientRequest request = new ServerToClientRequest();
-            request.setCommand(command.name());
-            request.setBody(objectMapper.writeValueAsString(body));
-            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(request)));
+            ServerCommand command = serverCommands.get(commandType);
+            command.execute(userId, body);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
