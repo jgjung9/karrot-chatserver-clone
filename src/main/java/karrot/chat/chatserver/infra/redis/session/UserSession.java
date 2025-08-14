@@ -1,6 +1,5 @@
 package karrot.chat.chatserver.infra.redis.session;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
