@@ -13,15 +13,15 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.util.Map;
+import java.io.IOException;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
-    @Value("${SERVER_NUMBER}")
-    private String serverNumber;
+    @Value("${SERVER_URL}")
+    private String serverUrl;
 
     private final SessionManager sessionManager;
     private final CommandManager commandManager;
@@ -31,19 +31,21 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String userId = (String) session.getAttributes().get("userId");
-        userSessionRepository.save(new UserSession(userId, serverNumber));
+        log.info("connect userId = {}", userId);
+        userSessionRepository.save(new UserSession(userId, serverUrl));
         sessionManager.register(Long.valueOf(userId), session);
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        commandManager.execute(session, message);
+        commandManager.executeClientInitiated(session, message);
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws IOException {
         String userId = (String) session.getAttributes().get("userId");
         sessionManager.remove(Long.valueOf(userId));
         log.info("연결 종료: {}", userId);
     }
+
 }
