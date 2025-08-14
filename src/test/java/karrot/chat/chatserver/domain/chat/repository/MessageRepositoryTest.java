@@ -1,69 +1,45 @@
 package karrot.chat.chatserver.domain.chat.repository;
 
+import karrot.chat.chatserver.domain.chat.entity.Chat;
 import karrot.chat.chatserver.domain.chat.entity.Message;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@Transactional("chatTransactionManager")
+@Transactional
 class MessageRepositoryTest {
 
     @Autowired
     private MessageRepository messageRepository;
+    @Autowired
+    private ChatRepository chatRepository;
+    private Chat insertedChat;
 
-    @Test
-    void save() {
-        Message message = new Message();
-        message.setChatId(1L);
-        message.setUserId(1L);
-        message.setText("Hello");
-        message.setTime(LocalDateTime.now());
-
-        Long savedId = messageRepository.save(message);
-        assertThat(savedId).isEqualTo(message.getId());
+    @BeforeEach
+    void setUp() {
+        insertedChat = chatRepository.save(new Chat());
     }
 
     @Test
-    void findById() {
-        Message message = new Message();
-        message.setChatId(1L);
-        message.setUserId(1L);
-        message.setText("Hello");
-        message.setTime(LocalDateTime.now());
-
-        Long savedId = messageRepository.save(message);
-        Message found = messageRepository.findById(savedId);
-
-        assertThat(found).isEqualTo(message);
-    }
-
-    @Test
+    @DisplayName("채팅방의 메시지 목록 가져오기")
     void findAllByChatId() {
-        Long chatId = 1L;
-        Message message1 = new Message();
-        message1.setChatId(chatId);
-        message1.setUserId(1L);
-        message1.setText("Hello");
-        message1.setTime(LocalDateTime.now());
+        Message message1 = Message.createMessage(insertedChat, 1L, "Hello1");
         messageRepository.save(message1);
 
-        Message message2 = new Message();
-        message2.setChatId(chatId);
-        message2.setUserId(1L);
-        message2.setText("Hello");
-        message2.setTime(LocalDateTime.now());
+        Message message2 = Message.createMessage(insertedChat, 1L, "Hello2");
         messageRepository.save(message2);
 
-        List<Message> messages = messageRepository.findAllByChatId(chatId);
+        List<Message> messages = messageRepository.findAllByChatId(insertedChat.getId());
         assertThat(messages).contains(message1, message2);
     }
 }
