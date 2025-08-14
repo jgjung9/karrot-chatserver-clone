@@ -1,16 +1,11 @@
 package karrot.chat.chatserver.domain.chat.command;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import karrot.chat.chatserver.domain.chat.command.client.ClientCommand;
-import karrot.chat.chatserver.domain.chat.command.client.ClientCommands;
-import karrot.chat.chatserver.domain.chat.command.client.DefaultClientCommand;
-import karrot.chat.chatserver.domain.chat.command.server.ServerCommand;
-import karrot.chat.chatserver.domain.chat.command.server.ServerCommands;
-import karrot.chat.chatserver.domain.chat.dto.protocol.ClientToServerRequest;
-import karrot.chat.chatserver.domain.chat.dto.protocol.ServerToClientRequest;
-import karrot.chat.chatserver.domain.chat.session.SessionManager;
-import karrot.chat.chatserver.infra.redis.stream.RedisStreamProducer;
+import karrot.chat.chatserver.domain.chat.command.client.ClientInitiatedCommand;
+import karrot.chat.chatserver.domain.chat.command.client.ClientInitiatedCommandType;
+import karrot.chat.chatserver.domain.chat.command.server.ServerInitiatedCommand;
+import karrot.chat.chatserver.domain.chat.command.server.ServerInitiatedCommandType;
+import karrot.chat.chatserver.common.protocol.ClientInitiatedRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -25,51 +20,48 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CommandManager {
 
     private final ObjectMapper objectMapper;
-    private final SessionManager sessionManager;
-    private final Map<ClientCommands, ClientCommand> clientCommands = new ConcurrentHashMap<>();
-    private final Map<ServerCommands, ServerCommand> serverCommands = new ConcurrentHashMap<>();
-    private final ClientCommand defaultClientCommand = new DefaultClientCommand();
+    private final Map<ClientInitiatedCommandType, ClientInitiatedCommand> clientCommands = new ConcurrentHashMap<>();
+    private final Map<ServerInitiatedCommandType, ServerInitiatedCommand> serverCommands = new ConcurrentHashMap<>();
+    private final ClientInitiatedCommand defaultClientInitiatedCommand;
 
     public CommandManager(
             ObjectMapper objectMapper,
-            SessionManager sessionManager,
-            List<ClientCommand> clientCommandList,
-            List<ServerCommand> serverCommandList
+            List<ClientInitiatedCommand> clientInitiatedCommandList,
+            List<ServerInitiatedCommand> serverInitiatedCommandList,
+            ClientInitiatedCommand defaultClientInitiatedCommand
     ) {
         this.objectMapper = objectMapper;
-        this.sessionManager = sessionManager;
-
-        clientCommandList.stream()
-                .forEach(c -> clientCommands.put(c.getCommandType(), c));
-        serverCommandList.stream()
+        this.defaultClientInitiatedCommand = defaultClientInitiatedCommand;
+        clientInitiatedCommandList.stream()
+                .forEach(c -> {
+                    if (c != defaultClientInitiatedCommand) {
+                        clientCommands.put(c.getCommandType(), c);
+                    }
+                });
+        serverInitiatedCommandList.stream()
                 .forEach(c -> serverCommands.put(c.getCommandType(), c));
     }
 
-    public void execute(WebSocketSession session, TextMessage message) {
+    public void executeClientInitiated(WebSocketSession session, TextMessage message) {
         try {
-            ClientToServerRequest request = objectMapper.readValue(message.getPayload(), ClientToServerRequest.class);
-            ClientCommand command;
+            ClientInitiatedRequest request = objectMapper.readValue(message.getPayload(), ClientInitiatedRequest.class);
+            ClientInitiatedCommand command;
             try {
-                command = clientCommands.get(ClientCommands.valueOf(request.getCommand()));
+                command = clientCommands.get(ClientInitiatedCommandType.valueOf(request.getCommand()));
             } catch (IllegalArgumentException e) {
-                command = defaultClientCommand;
+                command = defaultClientInitiatedCommand;
             }
-            command.execute(request.getBody(), session);
+            command.execute(request.getPayload(), session);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void send(Long userId, ServerCommands commandType, Object body){
-        WebSocketSession session = sessionManager.getSession(userId);
-        if (session == null || !session.isOpen()) {
-            // TODO: 예외 처리
-            return;
-        }
+    public void executeServerInitiated(Long userId, ServerInitiatedCommandType commandType, Object payload) {
+        ServerInitiatedCommand command = serverCommands.get(commandType);
 
         try {
-            ServerCommand command = serverCommands.get(commandType);
-            command.execute(userId, body);
+            command.execute(userId, payload);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

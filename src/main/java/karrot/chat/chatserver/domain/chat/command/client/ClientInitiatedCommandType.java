@@ -1,5 +1,8 @@
 package karrot.chat.chatserver.domain.chat.command.client;
 
-public enum ClientCommands {
+import java.util.Arrays;
+
+public enum ClientInitiatedCommandType {
     SEND_MESSAGE;
+
 }

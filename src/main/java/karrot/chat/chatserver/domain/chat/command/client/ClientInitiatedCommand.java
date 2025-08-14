@@ -5,8 +5,8 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
 
-public interface ClientCommand {
+public interface ClientInitiatedCommand {
 
     void execute(JsonNode payload, WebSocketSession session) throws IOException;
-    ClientCommands getCommandType();
+    ClientInitiatedCommandType getCommandType();
 }
