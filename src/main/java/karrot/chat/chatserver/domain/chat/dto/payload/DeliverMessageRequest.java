@@ -6,10 +6,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 
 @Data
-public class PushMessageRequest {
+public class DeliverMessageRequest {
+    private Long receiverId;
     private Long chatId;
-    private Long userId;
+    private Long senderId;
     private String message;
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-    private LocalDateTime sentAt;
+    private LocalDateTime createdAt;
 }
