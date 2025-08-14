@@ -1,14 +1,15 @@
 package karrot.chat.chatserver.infra.redis.session;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 public class UserSession {
     private String userId;
-    private String serverNumber;
+    private String serverUrl;
 
-    public UserSession(String userId, String serverNumber) {
+    public UserSession(String userId, String serverUrl) {
         this.userId = userId;
-        this.serverNumber = serverNumber;
+        this.serverUrl = serverUrl;
     }
 }

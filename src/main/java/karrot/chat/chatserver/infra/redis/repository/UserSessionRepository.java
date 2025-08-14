@@ -15,9 +15,13 @@ public class UserSessionRepository {
 
     public void save(UserSession session) {
         redisTemplate.opsForValue().set(
-                "session:user:" + session.getUserId(),
-                session.getServerNumber(),
-                Duration.ofMillis(300000)
+                "user:session:" + session.getUserId(),
+                session.getServerUrl()
         );
+    }
+
+    public void delete(Long userId) {
+        redisTemplate.opsForValue()
+                .getAndDelete("user:session:" + userId);
     }
 }
