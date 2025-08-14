@@ -7,6 +7,9 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+/**
+ * server -> client -> server
+ */
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ServerInitiatedResponse {

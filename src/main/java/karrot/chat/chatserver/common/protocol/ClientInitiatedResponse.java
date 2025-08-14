@@ -7,6 +7,9 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+/**
+ * client -> server -> client
+ */
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)

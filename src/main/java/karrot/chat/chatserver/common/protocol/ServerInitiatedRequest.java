@@ -2,6 +2,9 @@ package karrot.chat.chatserver.common.protocol;
 
 import lombok.*;
 
+/**
+ * server -> client -> server
+ */
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
