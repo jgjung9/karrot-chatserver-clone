@@ -1,4 +1,4 @@
-package karrot.chat.chatserver.domain.chat.controller;
+package karrot.chat.chatserver.api;
 
 import karrot.chat.chatserver.common.ApiResponse;
 import karrot.chat.chatserver.domain.chat.dto.payload.DeliverMessageRequest;
