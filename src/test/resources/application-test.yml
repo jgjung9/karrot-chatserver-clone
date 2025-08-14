@@ -1,15 +1,8 @@
 spring:
   datasource:
-    account:
-      url: jdbc:h2:mem:accountdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false;MODE=MYSQL
-      username: sa
-      password:
-      driver-class-name: org.h2.Driver
-    chat:
-      url: jdbc:h2:mem:chatdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false;MODE=MYSQL
-      username: sa
-      password:
-      driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:chatdb
+    username: sa
+    password:
   data:
     redis:
       host: localhost
@@ -17,12 +10,12 @@ spring:
       database: 0
 
   jpa:
+    show-sql: true
     hibernate:
       ddl-auto: create-drop
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-    show-sql: true
+        format_sql: true
 
   application:
     name: chatserver

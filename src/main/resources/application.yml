@@ -1,13 +1,8 @@
 spring:
   datasource:
-    account:
-      url: jdbc:mysql://localhost:3307/account
-      username: root
-      password: 1234
-    chat:
-      url: jdbc:mysql://localhost:3307/chatdb
-      username: root
-      password: 1234
+    url: jdbc:mysql://localhost:3307/chatdb
+    username: root
+    password: 1234
   data:
     redis:
       host: localhost
@@ -15,10 +10,12 @@ spring:
       database: 0
 
   jpa:
-    hibernate:
-      ddl-auto: update
-
     show-sql: true
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
 
   application:
     name: chatserver
