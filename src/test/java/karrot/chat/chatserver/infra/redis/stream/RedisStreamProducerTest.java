@@ -12,6 +12,7 @@ import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -40,11 +41,12 @@ class RedisStreamProducerTest {
     @Test
     void sendToStream() {
         String streamKey = "chat-stream";
+        String now = LocalDateTime.now().toString();
         Map<String, String> messageBody = Map.of(
-                "roomId", "room1",
-                "senderId", "user123",
+                "chatId", "1",
+                "senderId", "1",
                 "message", "안녕!",
-                "targetUserId", "77"
+                "createAt", now
         );
         redisStreamProducer.sendToStream(streamKey, messageBody);
 
@@ -59,9 +61,9 @@ class RedisStreamProducerTest {
         Map<Object, Object> fields = record.getValue();
 
 
-        assertThat("room1").isEqualTo(fields.get("roomId"));
-        assertThat("user123").isEqualTo(fields.get("senderId"));
+        assertThat("1").isEqualTo(fields.get("chatId"));
+        assertThat("1").isEqualTo(fields.get("senderId"));
         assertThat("안녕!").isEqualTo(fields.get("message"));
-        assertThat("77").isEqualTo(fields.get("targetUserId"));
+        assertThat(now).isEqualTo(fields.get("createAt"));
     }
 }
