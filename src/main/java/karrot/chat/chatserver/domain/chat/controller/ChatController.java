@@ -1,5 +1,6 @@
 package karrot.chat.chatserver.domain.chat.controller;
 
+import karrot.chat.chatserver.common.ApiResponse;
 import karrot.chat.chatserver.domain.chat.dto.payload.DeliverMessageRequest;
 import karrot.chat.chatserver.domain.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +14,9 @@ public class ChatController {
     private final ChatService chatService;
 
     @PutMapping("deliver")
-    public String deliverMessage(@RequestBody DeliverMessageRequest request) {
+    @ResponseBody
+    public ApiResponse<Void> deliverMessage(@RequestBody DeliverMessageRequest request) {
         chatService.sendMessageToClient(request);
-        return "성공";
+        return ApiResponse.success();
     }
 }
